@@ -1,0 +1,32 @@
+{
+  "expo": {
+    "name": "AI増量コーチ",
+    "slug": "ai-gain-coach",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "aigaincoach",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#F7FAF4"
+      }
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "食事写真を記録するために写真ライブラリへのアクセスを使用します。"
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
+
