@@ -27,15 +27,14 @@ export function Button({ label, onPress, icon: Icon, variant = "primary", disabl
     >
       <View style={styles.inner}>
         {Icon ? (
-          <Icon
-            color={variant === "primary" || variant === "danger" ? colors.surface : colors.primary}
-            size={20}
-          />
+          <Icon color={variant === "primary" ? colors.surface : getButtonForeground(variant)} size={18} />
         ) : null}
         <AppText
           style={[
             styles.label,
-            variant === "primary" || variant === "danger" ? styles.labelOnDark : null
+            variant === "primary" ? styles.labelOnDark : null,
+            variant === "danger" ? styles.labelDanger : null,
+            variant === "ghost" ? styles.labelGhost : null
           ]}
         >
           {label}
@@ -50,8 +49,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: radii.sm,
     justifyContent: "center",
-    minHeight: 48,
-    paddingHorizontal: spacing.md
+    minHeight: 44,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs
   },
   inner: {
     alignItems: "center",
@@ -59,10 +59,10 @@ const styles = StyleSheet.create({
     gap: spacing.xs
   },
   primary: {
-    backgroundColor: colors.primary
+    backgroundColor: colors.ink
   },
   secondary: {
-    backgroundColor: colors.primarySoft,
+    backgroundColor: colors.surface,
     borderColor: colors.border,
     borderWidth: 1
   },
@@ -70,7 +70,9 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent"
   },
   danger: {
-    backgroundColor: colors.danger
+    backgroundColor: colors.spotWarmBg,
+    borderColor: colors.spotWarm,
+    borderWidth: 1
   },
   disabled: {
     opacity: 0.5
@@ -79,11 +81,23 @@ const styles = StyleSheet.create({
     opacity: 0.82
   },
   label: {
-    color: colors.primary,
-    fontWeight: "800"
+    color: colors.ink,
+    fontSize: 14,
+    fontWeight: "500"
   },
   labelOnDark: {
     color: colors.surface
+  },
+  labelDanger: {
+    color: colors.spotWarm
+  },
+  labelGhost: {
+    color: colors.inkSecondary
   }
 });
 
+function getButtonForeground(variant: NonNullable<ButtonProps["variant"]>) {
+  if (variant === "danger") return colors.spotWarm;
+  if (variant === "ghost") return colors.inkSecondary;
+  return colors.ink;
+}

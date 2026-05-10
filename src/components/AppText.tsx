@@ -1,7 +1,7 @@
 import { PropsWithChildren } from "react";
-import { StyleSheet, Text, TextProps } from "react-native";
+import { Platform, StyleSheet, Text, TextProps } from "react-native";
 
-import { colors } from "@/styles/theme";
+import { colors, typography } from "@/styles/theme";
 
 type AppTextProps = PropsWithChildren<
   TextProps & {
@@ -28,34 +28,39 @@ export function AppText({ children, style, variant = "body", muted, ...props }: 
 
 const styles = StyleSheet.create({
   base: {
-    color: colors.text,
+    color: colors.inkSecondary,
+    fontFamily: Platform.select({ web: typography.fontSans, default: undefined }),
     letterSpacing: 0
   },
   title: {
-    fontSize: 28,
-    fontWeight: "800",
-    lineHeight: 35
+    color: colors.ink,
+    fontSize: 32,
+    fontWeight: "700",
+    lineHeight: 38
   },
   subtitle: {
-    fontSize: 18,
+    color: colors.ink,
+    fontSize: 20,
     fontWeight: "700",
-    lineHeight: 25
+    lineHeight: 27
   },
   body: {
-    fontSize: 15,
-    lineHeight: 22
+    fontSize: 16,
+    fontWeight: "400",
+    lineHeight: 27
   },
   caption: {
     fontSize: 12,
-    lineHeight: 17
+    lineHeight: 18
   },
   metric: {
+    color: colors.ink,
+    fontFamily: Platform.select({ web: typography.fontMono, default: undefined }),
     fontSize: 34,
-    fontWeight: "800",
-    lineHeight: 40
+    fontWeight: "500",
+    lineHeight: 42
   },
   muted: {
-    color: colors.muted
+    color: colors.inkTertiary
   }
 });
-

@@ -1,13 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { endOfTodayIso, startOfTodayIso } from "@/lib/date";
+import { demoHomeSummary } from "@/lib/demo";
 import { supabase } from "@/lib/supabase";
 
-export function useHomeSummary(userId: string | null) {
+export function useHomeSummary(userId: string | null, isDemo = false) {
   return useQuery({
-    queryKey: ["home-summary", userId],
-    enabled: Boolean(userId),
+    queryKey: ["home-summary", userId, isDemo],
+    enabled: Boolean(userId) || isDemo,
     queryFn: async () => {
+      if (isDemo) return demoHomeSummary;
       if (!userId) throw new Error("Not signed in");
 
       const todayStart = startOfTodayIso();
@@ -69,4 +71,3 @@ export function useHomeSummary(userId: string | null) {
     }
   });
 }
-

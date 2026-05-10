@@ -12,11 +12,12 @@ import { Screen } from "@/components/Screen";
 import { analyzeMeal, saveMeal, uploadMealPhoto } from "@/features/meals/api";
 import { useAuth } from "@/lib/auth";
 import { fromLocalInput, toDateTimeInputValue } from "@/lib/date";
+import { demoMealAnalysis } from "@/lib/demo";
 import { colors, spacing } from "@/styles/theme";
 import type { MealAnalysisResult } from "@/types/domain";
 
 export default function NewMealScreen() {
-  const { userId } = useAuth();
+  const { userId, isDemo } = useAuth();
   const [photoUri, setPhotoUri] = useState<string | null>(null);
   const [photoPath, setPhotoPath] = useState<string | null>(null);
   const [inputText, setInputText] = useState("");
@@ -52,6 +53,17 @@ export default function NewMealScreen() {
 
     setIsAnalyzing(true);
     try {
+      if (isDemo) {
+        const result = demoMealAnalysis;
+        setAnalysis(result);
+        setMealName(result.estimated_menu);
+        setKcal(String(result.nutrition.kcal));
+        setProtein(String(result.nutrition.protein_g));
+        setFat(String(result.nutrition.fat_g));
+        setCarbs(String(result.nutrition.carbs_g));
+        return;
+      }
+
       const uploadedPath = photoUri && !photoPath ? await uploadMealPhoto(userId, photoUri) : photoPath;
       if (uploadedPath) setPhotoPath(uploadedPath);
 
@@ -76,6 +88,13 @@ export default function NewMealScreen() {
 
   const submit = async () => {
     if (!userId) return;
+    if (isDemo) {
+      Alert.alert("デモ保存しました", "実データには保存せず、入力の流れだけ確認しました。", [
+        { text: "OK", onPress: () => router.back() }
+      ]);
+      return;
+    }
+
     setIsSaving(true);
     try {
       await saveMeal({
@@ -105,7 +124,9 @@ export default function NewMealScreen() {
       <View style={styles.header}>
         <Button icon={X} label="閉じる" onPress={() => router.back()} variant="ghost" />
         <AppText variant="title">食事記録</AppText>
-        <AppText muted>写真かテキストから始められます。AI推定は保存前に修正できます。</AppText>
+        <AppText muted>
+          {isDemo ? "デモ中は写真を送信せず、サンプル解析結果を表示します。" : "写真かテキストから始められます。AI推定は保存前に修正できます。"}
+        </AppText>
       </View>
 
       <Card>
@@ -173,14 +194,13 @@ const styles = StyleSheet.create({
     gap: spacing.sm
   },
   analysisBox: {
-    backgroundColor: colors.surfaceMuted,
+    backgroundColor: colors.spotCoolBg,
     borderRadius: 8,
     gap: spacing.xs,
     padding: spacing.sm
   },
   aiLabel: {
-    color: colors.primary,
+    color: colors.spotCool,
     fontWeight: "800"
   }
 });
-

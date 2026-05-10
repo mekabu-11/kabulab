@@ -12,7 +12,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "backgroundColor": "#F7FAF4"
+        "backgroundColor": "#ffffff"
       }
     },
     "plugins": [
@@ -29,4 +29,3 @@
     }
   }
 }
-

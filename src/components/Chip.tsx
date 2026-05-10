@@ -15,7 +15,11 @@ export function Chip({ children, selected, danger, onPress }: ChipProps) {
     <Pressable
       accessibilityRole="button"
       onPress={onPress}
-      style={[styles.chip, selected ? styles.selected : null, danger ? styles.danger : null]}
+      style={[
+        styles.chip,
+        danger ? styles.danger : null,
+        selected ? (danger ? styles.dangerSelected : styles.selected) : null
+      ]}
     >
       <AppText
         style={[
@@ -32,6 +36,7 @@ export function Chip({ children, selected, danger, onPress }: ChipProps) {
 
 const styles = StyleSheet.create({
   chip: {
+    backgroundColor: colors.surfaceSunken,
     borderColor: colors.border,
     borderRadius: radii.pill,
     borderWidth: 1,
@@ -41,21 +46,25 @@ const styles = StyleSheet.create({
     justifyContent: "center"
   },
   selected: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary
+    backgroundColor: colors.spotCoolBg,
+    borderColor: colors.spotCool
   },
   danger: {
-    borderColor: "#E7A095"
+    backgroundColor: colors.surface,
+    borderColor: colors.border
+  },
+  dangerSelected: {
+    backgroundColor: colors.spotWarmBg,
+    borderColor: colors.spotWarm
   },
   label: {
-    color: colors.text,
-    fontWeight: "700"
+    color: colors.inkSecondary,
+    fontWeight: "500"
   },
   selectedLabel: {
-    color: colors.surface
+    color: colors.spotCool
   },
   dangerSelectedLabel: {
-    color: colors.surface
+    color: colors.spotWarm
   }
 });
-

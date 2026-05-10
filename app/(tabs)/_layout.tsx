@@ -6,27 +6,28 @@ import { useAuth } from "@/lib/auth";
 import { colors } from "@/styles/theme";
 
 export default function TabsLayout() {
-  const { session, isLoading } = useAuth();
+  const { session, isDemo, isLoading } = useAuth();
 
   if (isLoading) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: colors.background }}>
-        <ActivityIndicator color={colors.primary} />
+        <ActivityIndicator color={colors.ink} />
       </View>
     );
   }
 
-  if (!session) return <Redirect href="/(auth)/login" />;
+  if (!session && !isDemo) return <Redirect href="/(auth)/login" />;
 
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.muted,
+        tabBarActiveTintColor: colors.spotCool,
+        tabBarInactiveTintColor: colors.inkTertiary,
         tabBarStyle: {
           backgroundColor: colors.surface,
-          borderTopColor: colors.border
+          borderTopColor: colors.border,
+          minHeight: 58
         }
       }}
     >

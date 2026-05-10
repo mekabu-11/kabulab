@@ -8,16 +8,17 @@ import { Card } from "@/components/Card";
 import { Screen } from "@/components/Screen";
 import { runTrendAnalysis } from "@/features/analysis/api";
 import { useAuth } from "@/lib/auth";
+import { demoTrendAnalysis } from "@/lib/demo";
 import { supabase } from "@/lib/supabase";
 import { colors, spacing } from "@/styles/theme";
 import type { TrendAnalysisResult } from "@/types/domain";
 
 export default function AnalysisScreen() {
-  const { userId } = useAuth();
+  const { userId, isDemo } = useAuth();
 
   const latest = useQuery({
-    queryKey: ["latest-analysis", userId],
-    enabled: Boolean(userId),
+    queryKey: ["latest-analysis", userId, isDemo],
+    enabled: Boolean(userId) && !isDemo,
     queryFn: async () => {
       if (!userId) throw new Error("Not signed in");
       const { data, error } = await supabase
@@ -35,24 +36,28 @@ export default function AnalysisScreen() {
   });
 
   const analysis = useMutation({
-    mutationFn: runTrendAnalysis,
-    onSuccess: () => latest.refetch(),
+    mutationFn: isDemo ? async () => demoTrendAnalysis : runTrendAnalysis,
+    onSuccess: () => {
+      if (!isDemo) latest.refetch();
+    },
     onError: (error) => Alert.alert("分析できませんでした", error.message)
   });
 
-  const content = analysis.data ?? latest.data;
+  const content = isDemo ? analysis.data ?? demoTrendAnalysis : analysis.data ?? latest.data;
 
   return (
     <Screen>
       <View style={styles.header}>
         <AppText variant="title">分析</AppText>
-        <AppText muted>直近7日間の食事・体調・体重・筋トレから、次に試す小さな改善案を出します。</AppText>
+        <AppText muted>
+          {isDemo ? "デモ分析を表示中です。実データはSupabase設定後に使えます。" : "直近7日間の食事・体調・体重・筋トレから、次に試す小さな改善案を出します。"}
+        </AppText>
       </View>
 
       <Button
         disabled={analysis.isPending}
         icon={analysis.isPending ? RefreshCw : Brain}
-        label={analysis.isPending ? "分析中" : "AI分析を更新"}
+        label={analysis.isPending ? "分析中" : isDemo ? "デモ分析を更新" : "AI分析を更新"}
         onPress={() => analysis.mutate()}
       />
 
@@ -120,10 +125,10 @@ const styles = StyleSheet.create({
     fontWeight: "800"
   },
   dangerCard: {
-    borderColor: colors.danger
+    backgroundColor: colors.spotWarmBg,
+    borderColor: colors.spotWarm
   },
   dangerText: {
-    color: colors.danger
+    color: colors.spotWarm
   }
 });
-

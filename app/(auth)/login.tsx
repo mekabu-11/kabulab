@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { LogIn, UserPlus } from "lucide-react-native";
+import { LogIn, Play, UserPlus } from "lucide-react-native";
 import { useState } from "react";
 import { Alert, StyleSheet, View } from "react-native";
 
@@ -8,6 +8,7 @@ import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { FormField } from "@/components/FormField";
 import { Screen } from "@/components/Screen";
+import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import { colors, spacing } from "@/styles/theme";
 
@@ -21,6 +22,7 @@ async function ensureProfile(userId: string, email?: string) {
 }
 
 export default function LoginScreen() {
+  const { startDemo } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -36,6 +38,11 @@ export default function LoginScreen() {
     }
 
     if (data.user) await ensureProfile(data.user.id, data.user.email ?? undefined);
+    router.replace("/(tabs)");
+  };
+
+  const signInDemo = () => {
+    startDemo();
     router.replace("/(tabs)");
   };
 
@@ -81,6 +88,7 @@ export default function LoginScreen() {
         />
         <Button disabled={isLoading} icon={LogIn} label="ログイン" onPress={signIn} />
         <Button disabled={isLoading} icon={UserPlus} label="新規登録" onPress={signUp} variant="secondary" />
+        <Button icon={Play} label="デモで入る" onPress={signInDemo} variant="secondary" />
       </Card>
 
       <AppText variant="caption" muted style={styles.notice}>
@@ -96,7 +104,6 @@ const styles = StyleSheet.create({
     paddingTop: spacing.xl
   },
   notice: {
-    color: colors.muted
+    color: colors.inkTertiary
   }
 });
-

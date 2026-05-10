@@ -11,15 +11,17 @@ import { useAuth } from "@/lib/auth";
 import { colors, spacing } from "@/styles/theme";
 
 export default function HomeScreen() {
-  const { userId } = useAuth();
-  const summary = useHomeSummary(userId);
+  const { userId, isDemo } = useAuth();
+  const summary = useHomeSummary(userId, isDemo);
   const data = summary.data;
 
   return (
     <Screen>
       <View style={styles.header}>
         <AppText variant="title">今日の増量</AppText>
-        <AppText muted>食べられる量を少しずつ増やして、体調との相性を見ます。</AppText>
+        <AppText muted>
+          {isDemo ? "デモデータで表示中です。Supabase設定なしで画面を確認できます。" : "食べられる量を少しずつ増やして、体調との相性を見ます。"}
+        </AppText>
       </View>
 
       <Card style={styles.calorieCard}>
@@ -91,13 +93,13 @@ const styles = StyleSheet.create({
     gap: spacing.xs
   },
   progressTrack: {
-    backgroundColor: colors.surfaceMuted,
+    backgroundColor: colors.surfaceSunken,
     borderRadius: 999,
     height: 12,
     overflow: "hidden"
   },
   progressFill: {
-    backgroundColor: colors.primary,
+    backgroundColor: colors.spotCool,
     borderRadius: 999,
     height: 12
   },

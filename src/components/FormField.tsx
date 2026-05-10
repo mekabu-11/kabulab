@@ -33,15 +33,16 @@ const styles = StyleSheet.create({
     gap: spacing.xs
   },
   label: {
-    color: colors.muted,
-    fontWeight: "700"
+    color: colors.inkTertiary,
+    fontWeight: "600",
+    textTransform: "uppercase"
   },
   input: {
     backgroundColor: colors.surface,
     borderColor: colors.border,
     borderRadius: radii.sm,
     borderWidth: 1,
-    color: colors.text,
+    color: colors.ink,
     fontSize: 16,
     minHeight: 48,
     paddingHorizontal: spacing.sm,
@@ -52,4 +53,3 @@ const styles = StyleSheet.create({
     textAlignVertical: "top"
   }
 });
-

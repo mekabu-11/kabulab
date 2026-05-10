@@ -22,7 +22,7 @@ const intensityLabels: Record<WorkoutIntensity, string> = {
 };
 
 export default function NewWorkoutScreen() {
-  const { userId } = useAuth();
+  const { userId, isDemo } = useAuth();
   const [performedOn, setPerformedOn] = useState(toDateInputValue());
   const [exerciseName, setExerciseName] = useState("");
   const [durationMinutes, setDurationMinutes] = useState("");
@@ -34,6 +34,12 @@ export default function NewWorkoutScreen() {
     if (!userId) return;
     if (!exerciseName.trim()) {
       Alert.alert("種目名を入力してください");
+      return;
+    }
+    if (isDemo) {
+      Alert.alert("デモ保存しました", "実データには保存せず、入力の流れだけ確認しました。", [
+        { text: "OK", onPress: () => router.back() }
+      ]);
       return;
     }
 

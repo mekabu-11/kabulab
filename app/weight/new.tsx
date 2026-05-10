@@ -14,7 +14,7 @@ import { supabase } from "@/lib/supabase";
 import { spacing } from "@/styles/theme";
 
 export default function NewWeightScreen() {
-  const { userId } = useAuth();
+  const { userId, isDemo } = useAuth();
   const [recordedOn, setRecordedOn] = useState(toDateInputValue());
   const [weight, setWeight] = useState("");
   const [memo, setMemo] = useState("");
@@ -24,6 +24,12 @@ export default function NewWeightScreen() {
     if (!userId) return;
     if (!weight) {
       Alert.alert("体重を入力してください");
+      return;
+    }
+    if (isDemo) {
+      Alert.alert("デモ保存しました", "実データには保存せず、入力の流れだけ確認しました。", [
+        { text: "OK", onPress: () => router.back() }
+      ]);
       return;
     }
 

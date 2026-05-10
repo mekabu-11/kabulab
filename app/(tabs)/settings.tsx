@@ -13,13 +13,19 @@ import { supabase } from "@/lib/supabase";
 import { spacing } from "@/styles/theme";
 
 export default function SettingsScreen() {
-  const { userId } = useAuth();
+  const { userId, isDemo, stopDemo } = useAuth();
   const [targetKcal, setTargetKcal] = useState("2400");
   const [targetWeight, setTargetWeight] = useState("");
   const [weakStomachNote, setWeakStomachNote] = useState("");
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
+    if (isDemo) {
+      setTargetKcal("2400");
+      setTargetWeight("60");
+      setWeakStomachNote("脂質が多い夕食のあとに胃もたれしやすい");
+      return;
+    }
     if (!userId) return;
     supabase
       .from("users")
@@ -32,10 +38,14 @@ export default function SettingsScreen() {
         setTargetWeight(data.target_weight_kg ? String(data.target_weight_kg) : "");
         setWeakStomachNote(data.weak_stomach_note ?? "");
       });
-  }, [userId]);
+  }, [isDemo, userId]);
 
   const save = async () => {
     if (!userId) return;
+    if (isDemo) {
+      Alert.alert("デモモードです", "設定保存の動きだけ確認しました。実データはSupabase設定後に保存されます。");
+      return;
+    }
     setIsSaving(true);
     const { error } = await supabase.from("users").upsert({
       id: userId,
@@ -54,6 +64,11 @@ export default function SettingsScreen() {
   };
 
   const signOut = async () => {
+    if (isDemo) {
+      stopDemo();
+      router.replace("/(auth)/login");
+      return;
+    }
     await supabase.auth.signOut();
     router.replace("/(auth)/login");
   };
@@ -62,7 +77,9 @@ export default function SettingsScreen() {
     <Screen>
       <View style={styles.header}>
         <AppText variant="title">設定</AppText>
-        <AppText muted>目標カロリーや体質メモを、AI提案の参考にします。</AppText>
+        <AppText muted>
+          {isDemo ? "デモモード中です。ここでの保存は実データには反映されません。" : "目標カロリーや体質メモを、AI提案の参考にします。"}
+        </AppText>
       </View>
 
       <Card>
@@ -101,4 +118,3 @@ const styles = StyleSheet.create({
     paddingTop: spacing.md
   }
 });
-

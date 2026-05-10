@@ -26,7 +26,7 @@ const symptomLabels: Record<Symptom, string> = {
 };
 
 export default function NewConditionScreen() {
-  const { userId } = useAuth();
+  const { userId, isDemo } = useAuth();
   const [occurredAt, setOccurredAt] = useState(toDateTimeInputValue());
   const [symptoms, setSymptoms] = useState<Symptom[]>(["no_issue"]);
   const [dangerFlags, setDangerFlags] = useState<DangerFlag[]>([]);
@@ -57,6 +57,19 @@ export default function NewConditionScreen() {
   const save = async () => {
     if (!userId) return;
     const finalSymptoms = symptoms.length ? symptoms : ["no_issue"];
+    if (isDemo) {
+      if (shouldShowSafetyNotice(dangerFlags)) {
+        Alert.alert("注意が必要な症状があります", safetyNotice, [
+          { text: "確認しました", onPress: () => router.back() }
+        ]);
+        return;
+      }
+      Alert.alert("デモ保存しました", "実データには保存せず、入力の流れだけ確認しました。", [
+        { text: "OK", onPress: () => router.back() }
+      ]);
+      return;
+    }
+
     setIsSaving(true);
 
     const { error } = await supabase.from("body_conditions").insert({
@@ -140,9 +153,10 @@ const styles = StyleSheet.create({
     gap: spacing.xs
   },
   dangerCard: {
-    borderColor: colors.danger
+    backgroundColor: colors.spotWarmBg,
+    borderColor: colors.spotWarm
   },
   dangerText: {
-    color: colors.danger
+    color: colors.spotWarm
   }
 });
